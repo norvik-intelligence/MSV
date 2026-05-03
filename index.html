@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memorial Jorge Nuno Pinto da Costa | FC Porto</title>
+  <meta name="description" content="Inspirado na homenagem dos adeptos no Estádio do Dragão, este projeto celebra o legado e a história de Jorge Nuno Pinto da Costa no Futebol Clube do Porto.">
+  <link rel="icon" href="https://memorial.fcporto.pt/_astro/favicon.Jkvpwdhj.ico">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue: #00428C;
+      --bg: #080c14;
+      --fg: #f0ece4;
+      --fg2: rgba(240,236,228,0.55);
+      --serif: Georgia,'Times New Roman',serif;
+      --sans: system-ui,-apple-system,sans-serif;
+    }
+    html { overflow-x: hidden; }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--serif);
+      overflow-x: hidden;
+    }
+
+    /* ── Smooth scroll target ── */
+    html.lenis { height: auto; }
+    html.lenis body { height: auto; }
+
+    /* ── Header ── */
+    #header {
+      position: fixed; top: 0; left: 0; width: 100%; z-index: 40;
+      display: flex; align-items: center; gap: 8px;
+      padding: 16px 20px 32px;
+      background: linear-gradient(to bottom,rgba(8,12,20,.48),transparent);
+      pointer-events: none;
+    }
+    #header button, #header a { pointer-events: auto; }
+    .hdr-logo { margin-right: auto; background: none; border: none; cursor: pointer; color: inherit; padding: 8px; display: flex; align-items: center; }
+    .hdr-logo img { height: 36px; width: auto; }
+    .hdr-audio { background: none; border: none; cursor: pointer; color: var(--fg); font-family: var(--sans); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; display: flex; align-items: center; gap: 8px; padding: 8px; }
+    .hdr-audio-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    .hdr-lang { display: flex; padding: 8px; }
+    .hdr-lang a { padding: 8px; color: var(--fg); text-decoration: none; font-family: var(--sans); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+    .hdr-lang a.dim { opacity: .6; }
+    #memorial-logo {
+      position: absolute; top: 0; left: 0; width: 100%;
+      display: flex; justify-content: center; padding-top: 20px; z-index: 60;
+      will-change: filter, opacity, transform;
+    }
+    #memorial-logo svg { height: 28px; color: white; }
+
+    /* ── Hero ── */
+    #hero-wrap { height: 200vh; margin-bottom: -100vh; }
+    #hero {
+      position: sticky; top: 0;
+      height: 100vh; min-height: 100vh;
+      overflow: hidden; contain: strict;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center;
+    }
+    #hero-bg {
+      position: absolute; inset: 0;
+      transform-origin: center center;
+    }
+    #hero-bg video { width: 100%; height: 100%; object-fit: cover; opacity: .4; }
+    #hero-glow { position: absolute; top: 10vh; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at bottom,var(--blue) 0%,transparent 50%); opacity: .24; pointer-events: none; }
+    #hero-content {
+      position: relative; z-index: 2;
+      display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 0 16px;
+      transform-origin: center center;
+    }
+    #hero h1 { font-size: clamp(64px,8vw,120px); line-height: .9; letter-spacing: -.04em; white-space: pre-line; }
+    #hero-sub { font-family: var(--sans); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+    #hero-cta {
+      position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
+      z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 4px;
+      background: none; border: none; color: var(--fg); cursor: pointer;
+      font-family: var(--sans); font-size: 14px; letter-spacing: .04em;
+    }
+    #hero-cta svg { width: 28px; height: 28px; }
+    @keyframes bounceY { 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
+    #hero-cta { animation: bounceY 2s ease-in-out infinite; }
+
+    /* ── Shared layout ── */
+    .full-vh { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80px 16px; text-align: center; }
+    .sticky-vh { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+    .abs-fill { position: absolute; inset: 0; }
+    .abs-fill video, .abs-fill img { width: 100%; height: 100%; object-fit: cover; }
+    .overlay { position: absolute; inset: 0; background: linear-gradient(to bottom,transparent,var(--bg)); opacity: .7; }
+
+    /* ── Timeline axis ── */
+    .tline { display: flex; flex-direction: column; align-items: center; }
+    .tline::before { content:''; width: 1px; height: 80px; background: linear-gradient(to bottom,transparent,rgba(240,236,228,.3)); }
+    .tline.dot::after { content:''; width: 8px; height: 8px; border-radius: 50%; background: var(--fg); margin-top: 4px; }
+    .tline.end::after { content:''; width: 1px; height: 80px; background: linear-gradient(to top,transparent,rgba(240,236,228,.3)); margin-top: 0; border-radius: 0; background: linear-gradient(to bottom,rgba(240,236,228,.3),transparent); }
+
+    /* ── Typography ── */
+    .num-big { font-size: clamp(56px,10vw,144px); line-height: 1; letter-spacing: -.04em; font-variant-numeric: lining-nums; }
+    .num-label { color: var(--fg2); font-family: var(--sans); font-size: 18px; margin-top: 4px; }
+    .section-title { font-size: clamp(28px,4vw,40px); text-align: center; }
+    .section-desc { font-family: var(--sans); font-size: 16px; line-height: 1.6; color: var(--fg2); max-width: 420px; text-align: center; margin: 0 auto; }
+    .divider { width: 1px; height: 100px; background: linear-gradient(to bottom,transparent,rgba(240,236,228,.3),transparent); margin: 0 auto; }
+
+    /* ── Bio intro ── */
+    #bio-intro { background: var(--bg); }
+    #bio-intro blockquote { max-width: 800px; font-size: clamp(20px,3vw,32px); line-height: 1.45; text-wrap: balance; }
+    #bio-intro .attr { font-family: var(--sans); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--fg2); margin-top: 32px; }
+
+    /* ── Election ── */
+    #bio-election { position: relative; }
+    #bio-election-bg { position: absolute; inset: 0; z-index: 0; opacity: 0; }
+    #bio-election-bg img { width: 100%; height: 100%; object-fit: cover; opacity: .64; }
+    #bio-election-bg-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom,rgba(8,12,20,.7),rgba(8,12,20,.4),rgba(8,12,20,.85)); }
+    #bio-election .inner { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 24px; text-align: center; }
+    #bio-election .date { font-family: var(--sans); font-size: 16px; color: var(--fg2); margin-top: 4px; }
+
+    /* ── Achievements ── */
+    #bio-achievements { position: relative; }
+    #bio-ach-header {
+      position: sticky; top: 0; z-index: 30;
+      min-height: 100vh; display: grid; grid-template-rows: 1fr auto 1fr;
+      align-items: center; justify-items: center; gap: clamp(24px,4vw,40px);
+      padding: 80px 16px;
+      text-align: center;
+    }
+    #bio-ach-assets {
+      margin-top: -50vh;
+      display: flex; flex-direction: column; gap: clamp(16px,4vw,96px);
+      padding-bottom: 70vh;
+      position: relative;
+    }
+    .ach-asset { position: relative; z-index: 20; will-change: transform; }
+    .ach-asset figure { overflow: hidden; will-change: transform; }
+    .ach-asset figure div { overflow: hidden; }
+    .ach-asset img { width: 100%; object-fit: cover; display: block; }
+    .ach-asset figcaption { font-family: var(--sans); font-size: 11px; color: var(--fg2); padding: 10px 0 4px; }
+
+    /* ── History ── */
+    #bio-history { position: relative; }
+    #bio-history-bg { position: absolute; inset: 0; z-index: -1; opacity: 0; }
+    #bio-history-bg video { width: 100%; height: 100%; object-fit: cover; opacity: .5; }
+    #bio-history-bg::after { content:''; position: absolute; inset: 0; background: linear-gradient(to bottom,transparent,rgba(8,12,20,.8)); }
+
+    /* ── Reach ── */
+    #bio-reach-wrap { position: relative; height: 300vh; margin-bottom: -100vh; }
+    #bio-reach { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 80px 16px; }
+    #reach-title { font-size: clamp(28px,4vw,40px); }
+    #reach-title div:first-child { transform-origin: bottom; display: block; }
+    #reach-title div:last-child  { transform-origin: top; display: block; }
+
+    /* ── Passing ── */
+    #bio-passing-wrap { position: relative; margin-top: -75vh; height: 400vh; }
+    #bio-passing {
+      position: sticky; top: 0; height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; padding: 80px 16px; overflow: hidden;
+    }
+    #bio-passing-ceremony { position: absolute; inset: 0; z-index: 0; }
+    #bio-passing-ceremony video { width: 100%; height: 100%; object-fit: cover; opacity: .4; }
+    #bio-passing-particles { position: absolute; inset: 0; z-index: 1; mix-blend-mode: screen; }
+    #bio-passing-particles video { width: 100%; height: 100%; object-fit: cover; }
+    #bio-passing-title { position: relative; z-index: 2; font-size: clamp(20px,3vw,30px); max-width: 820px; text-wrap: balance; line-height: 1.35; }
+
+    /* ── Bio background (stars/gradient) ── */
+    #bio-bg {
+      position: sticky; bottom: 0; left: 0; z-index: -2;
+      height: 0; width: 100%;
+      transform: translateY(-100vh);
+    }
+    #bio-bg-inner { position: absolute; bottom: 0; left: 0; width: 100vw; height: 100vh; }
+    #bio-bg-inner img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    #bio-bg-gradient { opacity: .48; object-position: bottom; }
+    #bio-bg-stars { opacity: .32; }
+
+    /* ── Fan tribute ── */
+    #fan-video-wrap { position: relative; margin-top: -100vh; margin-bottom: -100vh; height: 400vh; }
+    #fan-video { position: sticky; top: 0; height: 100vh; }
+    #fan-video video { width: 100%; height: 100%; object-fit: cover; }
+    #fan-video-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom,transparent 60%,var(--bg)); }
+    #fan-intro { background: var(--bg); position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 80px 16px; gap: 24px; }
+    #fan-intro h2 { font-size: clamp(22px,3.5vw,30px); max-width: 960px; text-wrap: balance; }
+    #fan-intro p { font-family: var(--sans); font-size: clamp(16px,2vw,20px); color: var(--fg2); }
+
+    /* ── Testimonials ── */
+    .test-wrap { position: relative; height: 300vh; }
+    .test-sticky {
+      position: sticky; top: 0; height: 100vh;
+      display: grid; grid-template-rows: 1fr 1fr;
+    }
+    @media (min-width: 1024px) {
+      .test-sticky { grid-template-rows: none; grid-template-columns: 1fr 1fr; }
+    }
+    .test-media { position: relative; overflow: hidden; background: #000; }
+    .test-media video { width: 100%; height: 100%; min-height: 50vh; object-fit: cover; }
+    .test-content { display: flex; flex-direction: column; justify-content: flex-end; padding: clamp(32px,5vw,64px); }
+    .test-content blockquote { font-size: clamp(17px,1.8vw,20px); max-width: 544px; text-wrap: balance; line-height: 1.45; }
+
+    /* ── Preservation steps ── */
+    #preservation { position: relative; background: var(--bg); }
+    .step {
+      position: sticky; top: 0; height: 100vh; overflow: hidden;
+      background: var(--bg);
+    }
+    .step + .step { margin-top: -2vh; }
+    .step-bg-video { position: absolute; inset: 0; }
+    .step-bg-video video { width: 100%; height: 100%; object-fit: cover; opacity: .8; }
+    .step-bg-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom,transparent,rgba(8,12,20,.64)); }
+    .step-content {
+      position: relative; z-index: 2;
+      display: grid; grid-template-columns: repeat(24,1fr);
+      gap: 16px; padding: clamp(80px,10vh,96px) clamp(16px,3vw,32px);
+      width: 100%;
+    }
+    .step-num { grid-column: 1/5; font-family: var(--sans); font-size: 14px; letter-spacing: .1em; padding-top: 8px; }
+    .step-h2 { grid-column: 1/-1; font-size: clamp(24px,3.5vw,32px); }
+    .step-p { grid-column: 1/-1; font-family: var(--sans); font-size: 16px; line-height: 1.6; color: var(--fg2); max-width: 480px; }
+    @media (min-width: 768px) { .step-h2 { grid-column: 1/13; } .step-p { grid-column: 13/-1; } }
+    @media (min-width: 1024px) { .step-h2 { grid-column: 5/14; } .step-p { grid-column: 14/24; } }
+    @media (max-width: 639px) { .step-content { grid-template-columns: 1fr; } .step-num,.step-h2,.step-p { grid-column: 1/-1; } }
+
+    /* ── AVB Quote ── */
+    #avb-quote {
+      position: sticky; top: 0; height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 80px clamp(16px,5vw,48px);
+      overflow: hidden; margin-top: -2vh; z-index: 16; background: var(--bg);
+    }
+    #avb-quote .avb-bg { position: absolute; inset: 0; z-index: 0; }
+    #avb-quote .avb-bg img { width: 100%; height: 100%; object-fit: cover; object-position: bottom; }
+    #avb-quote .avb-stars { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .32; }
+    #avb-quote blockquote { position: relative; z-index: 2; font-size: clamp(18px,2.5vw,24px); max-width: 1136px; text-wrap: balance; line-height: 1.45; }
+    #avb-quote .avb-attr { position: relative; z-index: 2; font-family: var(--sans); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--fg2); margin-top: clamp(16px,4vw,44px); }
+    #preservation-spacer { height: 200vh; }
+
+    /* ── Museum ── */
+    #museum { position: relative; margin-bottom: -75vh; overflow: clip; }
+    #museum::after { display: block; content: ''; height: 175vh; }
+    #museum-bg { position: sticky; top: 0; height: 100vh; background: #000; }
+    #museum-bg img { width: 100%; height: 100%; object-fit: cover; opacity: .72; }
+    #museum-content-wrap { max-width: 1600px; margin: 0 auto; padding: 0 clamp(32px,4vw,96px); }
+    #museum-intro-scroll { position: relative; margin-bottom: -100vh; height: 300vh; }
+    #museum-intro {
+      position: sticky; top: 0; height: 100svh;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      gap: clamp(24px,4vw,96px); padding: clamp(48px,8vh,104px) clamp(32px,4vw,96px);
+    }
+    @media (max-width: 1023px) { #museum-intro { flex-direction: column; align-items: flex-start; } }
+    #museum-counter { font-size: clamp(80px,12vw,144px); line-height: 1; letter-spacing: -.04em; font-variant-numeric: lining-nums; white-space: nowrap; }
+    #museum-counter small { font-size: .33em; display: block; margin-top: 4px; }
+    #museum-desc { max-width: 432px; font-family: var(--sans); font-size: clamp(16px,1.8vw,18px); line-height: 1.5; }
+    .museum-test-scroll { position: relative; height: 400vh; margin-bottom: -75vh; }
+    .museum-test-sticky {
+      position: sticky; top: 0; height: 100svh;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: clamp(48px,8vh,96px) clamp(32px,4vw,96px);
+    }
+    .museum-test-sticky blockquote { max-width: 688px; font-size: clamp(17px,1.8vw,20px); text-wrap: balance; line-height: 1.45; }
+
+    /* ── Footer ── */
+    #footer {
+      position: relative; overflow: hidden;
+      min-height: 100vh; display: flex; align-items: center;
+      padding-top: 32px;
+    }
+    #footer-bg { position: absolute; inset: 0; z-index: 0; }
+    #footer-bg .f-stars { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .24; }
+    #footer-bg .f-glow { position: absolute; inset: 0; background: linear-gradient(to bottom right,transparent,#00428C); opacity: .32; }
+    #footer-inner { position: relative; z-index: 2; display: flex; width: 100%; min-height: 100vh; align-items: center; }
+    @media (max-width: 1023px) { #footer-inner { flex-direction: column; justify-content: flex-end; padding-top: 96px; gap: 32px; } }
+    #footer-text { display: flex; flex-direction: column; gap: clamp(16px,2.5vw,24px); padding: clamp(40px,5vw,80px) clamp(32px,4vw,64px); max-width: 720px; z-index: 3; }
+    #footer-text h2 { font-size: clamp(22px,3.5vw,30px); max-width: 800px; text-wrap: balance; white-space: pre-line; }
+    #footer-text p { font-family: var(--sans); font-size: clamp(14px,1.4vw,18px); line-height: 1.32; max-width: 360px; opacity: .6; }
+    #footer-cta {
+      display: inline-block; margin-top: 8px; width: fit-content;
+      padding: 1.145em; font-family: var(--sans); font-size: clamp(11px,1.1vw,12px);
+      letter-spacing: .1em; text-transform: uppercase; text-decoration: none;
+      color: var(--fg); border-radius: 2px;
+      background: rgba(240,236,228,.06); border: 1px solid rgba(240,236,228,.24);
+      transition: background .2s;
+    }
+    #footer-cta:hover { background: rgba(240,236,228,.08); }
+    #footer-portrait {
+      position: absolute; right: 0; bottom: 0; height: 100%;
+      display: flex; align-items: flex-end; justify-content: flex-end;
+    }
+    @media (max-width: 1023px) { #footer-portrait { position: relative; height: min(512px,50svh); } }
+    #footer-portrait img { height: 100%; max-height: 100svh; width: auto; max-width: 100vw; object-fit: contain; object-position: bottom right; opacity: .8; }
+
+    /* ── Grain + vignette ── */
+    .grain { position: fixed; inset: 0; z-index: 50; pointer-events: none; mix-blend-mode: soft-light; opacity: .35; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.8'/%3E%3C/svg%3E"); background-repeat: repeat; background-size: 128px; }
+    @media (max-width: 768px) { .grain { display: none; } }
+    .vignette { position: fixed; inset: 0; pointer-events: none; z-index: 10; background: radial-gradient(ellipse at center,transparent 50%,rgba(8,12,20,.6) 100%); }
+
+    /* ── Word-reveal spans ── */
+    .word { display: inline-block; }
+  </style>
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+
+<!-- ── HEADER ── -->
+<header id="header">
+  <button class="hdr-logo" id="logo-btn" aria-label="topo da página">
+    <img src="https://memorial.fcporto.pt/_astro/logo.BZRm4igG.png" alt="FC Porto">
+  </button>
+  <button class="hdr-audio" id="audio-btn" data-on="Som ligado" data-off="Som desligado">
+    <span class="hdr-audio-dot"></span><span>Som ligado</span>
+  </button>
+  <nav class="hdr-lang">
+    <a href="#" class="dim">EN</a>
+    <a href="#">PT</a>
+  </nav>
+  <div id="memorial-logo">
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+      <path d="M26.725 3.91V27.46H24.65V6.12L21.87 8.79V30.23H22.84H24.65H26.73H29.14H29.5V1L26.73 3.91Z" fill="currentColor" fill-opacity=".95"/>
+      <path d="M7.36 20.4V27.47H5.28V18.4L2.5 15.7V30.24H3.73H5.28H7.36H9.69H10.14V23.2L7.36 20.4Z" fill="currentColor" fill-opacity=".95"/>
+      <path d="M19.79 10.53L16.05 14.6L2.51 1.01V4.92L14.23 16.71L16.28 18.65L19.79 14.48V10.53Z" fill="currentColor" fill-opacity=".95"/>
+      <path d="M19.79 18.1L16.16 22.05L2.51 8.34V12.25L14.61 24.4L16.33 26.15L19.79 22.08V18.1Z" fill="currentColor" fill-opacity=".95"/>
+    </svg>
+  </div>
+</header>
+
+<!-- ── HERO ── -->
+<div id="hero-wrap">
+  <section id="hero">
+    <div id="hero-bg" aria-hidden="true">
+      <video poster="https://memorial.fcporto.pt/_astro/hero.BYqlXAfD.jpg"
+             src="https://memorial.fcporto.pt/_astro/hero.noaCyoRe.mp4#t=0.1"
+             preload="none" loop muted playsinline></video>
+      <div id="hero-glow"></div>
+    </div>
+    <div id="hero-content">
+      <h1>Jorge Nuno
+Pinto da Costa</h1>
+      <p id="hero-sub">O Presidente dos Presidentes</p>
+    </div>
+    <button id="hero-cta">
+      <p>Clica para começar</p>
+      <svg viewBox="0 0 28 28" fill="none"><path d="M17.75 12.5L14 16.25L10.25 12.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </section>
+</div>
+
+<!-- ── BIOGRAPHY ── -->
+<section id="biography">
+
+  <!-- Bio background (sticky stars/gradient) -->
+  <div id="bio-bg" aria-hidden="true">
+    <div id="bio-bg-inner">
+      <img id="bio-bg-gradient" src="https://memorial.fcporto.pt/_astro/gradient.DgFJWIiY_Z1AiqEw.webp" alt="" loading="lazy">
+      <img id="bio-bg-stars"    src="https://memorial.fcporto.pt/_astro/stars.BxpLE7OM.svg" alt="">
+    </div>
+  </div>
+
+  <div id="bio-inner" style="position:relative;">
+
+    <!-- Introduction -->
+    <article id="bio-intro" class="full-vh">
+      <div class="tline end" aria-hidden="true"></div>
+      <blockquote id="intro-quote">
+        "Eu não sou Presidente, eu assumi o lugar de Presidente. O que eu sou é adepto. Antes de ser sócio, eu sou adepto."
+      </blockquote>
+      <p class="attr">Jorge Nuno Pinto da Costa</p>
+      <div class="tline dot" style="margin-top:32px;" aria-hidden="true"></div>
+    </article>
+
+    <!-- Election -->
+    <article id="bio-election" class="full-vh">
+      <div id="bio-election-bg" aria-hidden="true">
+        <img src="https://memorial.fcporto.pt/_astro/biography-election.C-SCeD1W_Z2p6Opq.webp" alt="" loading="lazy">
+        <div id="bio-election-bg-overlay"></div>
+      </div>
+      <div class="inner">
+        <div class="tline end" aria-hidden="true"></div>
+        <div>
+          <h2 class="section-title">A Eleição</h2>
+          <p class="date">17 abril, 1982</p>
+        </div>
+        <div class="divider" aria-hidden="true"></div>
+        <p id="election-text" class="section-desc">
+          Há um FC Porto antes e depois de 17 de abril de 1982, data que marcou uma viragem histórica com a eleição de Jorge Nuno Pinto da Costa para Presidente. Nos 89 anos anteriores, o Clube conquistara apenas 16 troféus no futebol, três deles já sob a liderança do lendário dirigente no Departamento de Futebol.
+        </p>
+      </div>
+    </article>
+
+    <!-- Achievements -->
+    <article id="bio-achievements">
+      <div id="bio-ach-header">
+        <div class="tline end" aria-hidden="true"></div>
+        <div>
+          <div class="num-big" id="ach-num">2594</div>
+          <p class="num-label">Títulos</p>
+        </div>
+        <div>
+          <div class="divider" aria-hidden="true"></div>
+          <p id="ach-text" class="section-desc" style="margin-top:24px;">
+            Com Jorge Nuno Pinto da Costa ao leme, o FC Porto sagrou-se Campeão da Europa e do Mundo, Decacampeão de hóquei em patins, Heptacampeão de andebol, Hexacampeão de bilhar, Pentacampeão de futebol, aumentou a capacidade do Estádio das Antas, construiu o Dragão e juntou-lhe um Museu e um pavilhão.
+          </p>
+        </div>
+      </div>
+
+      <div id="bio-ach-assets">
+        <div class="ach-asset" style="margin-left:10vw;width:clamp(200px,30vw,400px);" data-speed="1.6">
+          <figure><div><img src="https://memorial.fcporto.pt/_astro/1.XvJKPUcv_Z10wNWX.webp" alt="Tomada de posse, a 23 de abril de 1982" loading="lazy" style="aspect-ratio:300/380;"></div>
+          <figcaption>Tomada de posse, a 23 de abril de 1982</figcaption></figure>
+        </div>
+        <div class="ach-asset" style="margin-left:auto;margin-right:8vw;width:clamp(160px,22vw,300px);" data-speed="1.3">
+          <figure><div><img src="https://memorial.fcporto.pt/_astro/2.1UcT9XzS_1riSWa.webp" alt="Com José Maria Pedroto" loading="lazy" style="aspect-ratio:170/240;"></div>
+          <figcaption>Com José Maria Pedroto, amigo e primeiro treinador na era Pinto da Costa</figcaption></figure>
+        </div>
+        <div class="ach-asset" style="margin-left:30vw;width:clamp(200px,28vw,380px);" data-speed="1.1">
+          <figure><div><img src="https://memorial.fcporto.pt/_astro/3.acNOVP8Y_1muYqE.webp" alt="Campeão europeu em Viena" loading="lazy" style="aspect-ratio:240/200;"></div>
+          <figcaption>Campeão europeu em Viena</figcaption></figure>
+        </div>
+        <div class="ach-asset" style="margin-left:auto;margin-right:5vw;width:clamp(180px,25vw,350px);" data-speed="1.6">
+          <figure><div><img src="https://memorial.fcporto.pt/_astro/4.CsuERgme_Z1TUxQ2.webp" alt="Duas vezes campeão europeu" loading="lazy" style="aspect-ratio:250/200;"></div>
+          <figcaption>Com Pinto da Costa, o FC Porto foi duas vezes campeão europeu</figcaption></figure>
+        </div>
+        <div class="ach-asset" style="margin-left:8vw;width:clamp(160px,20vw,280px);" data-speed="1.1">
+          <figure><div><img src="https://memorial.fcporto.pt/_astro/5.DUzpbwca_10esLK.webp" alt="Supertaça" loading="lazy" style="aspect-ratio:240/360;"></div>
+          <figcaption>Recordista de vitórias na Supertaça</figcaption></figure>
+        </div>
+        <div class="ach-asset" style="margin-left:40vw;width:clamp(200px,28vw,380px);" data-speed="1.7">
+          <figure><div><img src="https://memorial.fcporto.pt/_astro/6.BmNfp8in_Z1WDVqE.webp" alt="Penta" loading="lazy" style="aspect-ratio:240/190;"></div>
+          <figcaption>A festejar o inédito Penta, com Fernando Santos</figcaption></figure>
+        </div>
+        <div class="ach-asset" style="margin-left:15vw;width:clamp(200px,28vw,380px);" data-speed="1.25">
+          <figure><div><img src="https://memorial.fcporto.pt/_astro/7.CYFPnkyF_1d95It.webp" alt="Taça UEFA" loading="lazy" style="aspect-ratio:240/220;"></div>
+          <figcaption>A primeira Taça UEFA do futebol português</figcaption></figure>
+        </div>
+        <div class="ach-asset" style="margin-left:auto;margin-right:15vw;width:clamp(220px,30vw,440px);" data-speed="1.7">
+          <figure><div><img src="https://memorial.fcporto.pt/_astro/8.DYeUT1RJ_2dUCOV.webp" alt="Estádio do Dragão" loading="lazy" style="aspect-ratio:240/140;"></div>
+          <figcaption>Visita às obras do Estádio do Dragão, que inaugurou em 2003</figcaption></figure>
+        </div>
+        <div class="ach-asset" style="margin-left:6vw;width:clamp(200px,28vw,400px);" data-speed="1.5">
+          <figure><div><img src="https://memorial.fcporto.pt/_astro/9.f4zb7UbV_Z7uRgR.webp" alt="Dublin" loading="lazy" style="aspect-ratio:240/160;"></div>
+          <figcaption>Em Dublin conquistou o sétimo troféu internacional no futebol</figcaption></figure>
+        </div>
+        <div class="ach-asset" style="margin-left:auto;margin-right:10vw;width:clamp(160px,22vw,300px);" data-speed="1.3">
+          <figure><div><img src="https://memorial.fcporto.pt/_astro/10.Brqzkv0K_Z2gTy2K.webp" alt="Hóquei" loading="lazy" style="aspect-ratio:210/260;"></div>
+          <figcaption>A celebrar o primeiro título europeu da Presidência, no Hóquei em Patins</figcaption></figure>
+        </div>
+        <div class="ach-asset" style="margin-left:12vw;width:clamp(160px,22vw,300px);" data-speed="1.05">
+          <figure><div><img src="https://memorial.fcporto.pt/_astro/11.BsYKO7wp_1AEncx.webp" alt="Voleibol" loading="lazy" style="aspect-ratio:210/260;"></div>
+          <figcaption>Tetracampeão de Voleibol Feminino, o último campeonato conquistado</figcaption></figure>
+        </div>
+        <div class="ach-asset" style="margin-left:auto;margin-right:20vw;width:clamp(200px,30vw,420px);margin-bottom:12lvh;" data-speed="1.4">
+          <figure><div><img src="https://memorial.fcporto.pt/_astro/12.G8IXufNY_Z17VyBw.webp" alt="Presidente mais titulado" loading="lazy" style="aspect-ratio:400/360;"></div>
+          <figcaption>O Presidente mais titulado do mundo</figcaption></figure>
+        </div>
+      </div>
+    </article>
+
+    <!-- History -->
+    <article id="bio-history" class="full-vh">
+      <div id="bio-history-bg" aria-hidden="true">
+        <video src="https://memorial.fcporto.pt/_astro/history.D21jpvMR.mp4#t=0.1"
+               poster="https://memorial.fcporto.pt/_astro/history.da6JazIK.jpg"
+               preload="none" muted loop playsinline></video>
+      </div>
+      <div class="tline end" style="position:relative;z-index:2;" aria-hidden="true"></div>
+      <div style="position:relative;z-index:2;text-align:center;">
+        <div class="num-big" id="hist-num">42</div>
+        <p class="num-label">Anos de História</p>
+      </div>
+      <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:16px;">
+        <div class="divider"></div>
+        <p id="hist-text" class="section-desc">
+          Sob a presidência de Jorge Nuno Pinto da Costa, o FC Porto acumulou numerosos títulos, ao mesmo tempo que modernizou e ampliou as infraestruturas do clube e consolidou parcerias estratégicas para os centros de treinos do Olival e do complexo de piscinas de Campanhã.
+        </p>
+      </div>
+    </article>
+
+    <!-- Reach -->
+    <div id="bio-reach-wrap">
+      <article id="bio-reach">
+        <div class="tline dot" style="margin-bottom:32px;" aria-hidden="true"></div>
+        <h2 id="reach-title">
+          <div>Do Porto</div>
+          <div>para o Mundo</div>
+        </h2>
+        <p id="reach-text" class="section-desc" style="margin-top:24px;max-width:560px;text-align:center;">
+          Sem nunca esquecer as raízes, o FC Porto cresceu com a cidade e a cidade cresceu com o FC Porto. O Clube tem mais de 132 anos de história, mas há um nome que ajudou a escrevê-la como nenhum outro: Jorge Nuno Pinto da Costa.
+        </p>
+      </article>
+    </div>
+
+    <!-- Passing -->
+    <div id="bio-passing-wrap">
+      <article id="bio-passing">
+        <div id="bio-passing-ceremony" aria-hidden="true">
+          <video src="https://memorial.fcporto.pt/_astro/passing.BsHTqvh3.mp4"
+                 poster="https://memorial.fcporto.pt/_astro/passing.BTuLG0-Y.jpg"
+                 preload="none" loop muted playsinline></video>
+        </div>
+        <div id="bio-passing-particles" aria-hidden="true">
+          <video src="https://memorial.fcporto.pt/_astro/particles.Yzq3u7fp.mp4"
+                 preload="none" autoplay loop muted playsinline></video>
+        </div>
+        <h2 id="bio-passing-title">
+          O seu falecimento, a 15 de fevereiro de 2025, consolidou essa marca para sempre.
+        </h2>
+      </article>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── FAN TRIBUTE ── -->
+<section id="fan-tribute" style="position:relative;background:#000;">
+
+  <div id="fan-video-wrap">
+    <div id="fan-video">
+      <video poster="https://memorial.fcporto.pt/_astro/fan-memorial-v2.BYU3Tdng.jpg"
+             playsinline loop muted
+             style="width:100%;height:100%;object-fit:cover;">
+        <source src="https://memorial.fcporto.pt/_astro/fan-memorial-v2.HyqujbPw.mp4" type="video/mp4">
+      </video>
+      <div id="fan-video-overlay"></div>
+    </div>
+  </div>
+
+  <article id="fan-intro">
+    <h2 id="fan-intro-title">Espontaneamente, surgiram no Estádio do Dragão os primeiros objetos de homenagem.</h2>
+    <p id="fan-intro-sub">Sinal da sua ligação eterna ao universo portista.</p>
+  </article>
+
+  <!-- Testimonial A -->
+  <div class="test-wrap">
+    <div class="test-sticky">
+      <div class="test-media">
+        <video poster="https://memorial.fcporto.pt/_astro/testimonial-a.C2Bzuta-.jpg" playsinline loop muted>
+          <source src="https://memorial.fcporto.pt/_astro/testimonial-a.vtYSciaV.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="test-content">
+        <blockquote id="test-a-quote">
+          "Jorge Nuno Pinto da Costa significava uma série de alegrias que fomos tendo ao longo da vida."
+        </blockquote>
+      </div>
+    </div>
+  </div>
+
+  <!-- Testimonial B -->
+  <div class="test-wrap">
+    <div class="test-sticky" style="direction:ltr;">
+      <div class="test-content" style="order:1;">
+        <blockquote id="test-b-quote">
+          "Uma grande referência. O homem mais carismático que conheci. Mostra como devemos defender uma casa e uma família."
+        </blockquote>
+      </div>
+      <div class="test-media" style="order:2;">
+        <video poster="https://memorial.fcporto.pt/_astro/testimonial-b.IMd7zze8.jpg" playsinline loop muted>
+          <source src="https://memorial.fcporto.pt/_astro/testimonial-b.buKImugX.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+  </div>
+
+  <!-- Testimonial C -->
+  <div class="test-wrap">
+    <div class="test-sticky">
+      <div class="test-media">
+        <video poster="https://memorial.fcporto.pt/_astro/testimonial-c-v2.BusE-_SJ.jpg" playsinline loop muted>
+          <source src="https://memorial.fcporto.pt/_astro/testimonial-c-v2.D3L-mxoX.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="test-content">
+        <blockquote id="test-c-quote">
+          "Sinto que foi quem tornou a mística do FC Porto aquilo que é hoje."
+        </blockquote>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ── PRESERVATION STEPS ── -->
+<section id="preservation">
+
+  <article class="step" style="z-index:10;">
+    <div class="step-bg-video" aria-hidden="true">
+      <video src="https://memorial.fcporto.pt/_astro/recolha.BLKO3gvI.mp4#t=0.1"
+             poster="https://memorial.fcporto.pt/_astro/recolha.CmzxF8HH.jpg"
+             muted preload="none" playsinline loop></video>
+    </div>
+    <div class="step-bg-overlay" aria-hidden="true"></div>
+    <div class="step-content">
+      <p class="step-num">01.</p>
+      <h2 class="step-h2">Recolha</h2>
+      <p class="step-p">Perante a dimensão e o valor simbólico do espólio reunido, cinco dias após a morte, o FC Porto iniciou um processo rigoroso de recolha dos objetos depositados.</p>
+    </div>
+  </article>
+
+  <article class="step" style="z-index:11;">
+    <div class="step-bg-video" aria-hidden="true">
+      <video src="https://memorial.fcporto.pt/_astro/transporte.BB-QUyKL.mp4#t=0.1"
+             poster="https://memorial.fcporto.pt/_astro/transporte.DZnYXZEp.jpg"
+             muted preload="none" playsinline loop></video>
+    </div>
+    <div class="step-bg-overlay" aria-hidden="true"></div>
+    <div class="step-content">
+      <p class="step-num">02.</p>
+      <h2 class="step-h2">Transporte</h2>
+      <p class="step-p">Os objetos recolhidos, dado o seu valor sentimental, foram cuidadosamente transportados para a área de conservação e restauro do Museu FC Porto.</p>
+    </div>
+  </article>
+
+  <article class="step" style="z-index:12;">
+    <div class="step-bg-video" aria-hidden="true">
+      <video src="https://memorial.fcporto.pt/_astro/arquivo.CpMOT5s3.mp4"
+             poster="https://memorial.fcporto.pt/_astro/arquivo.DnI06kHW.jpg"
+             muted preload="none" playsinline loop></video>
+    </div>
+    <div class="step-bg-overlay" aria-hidden="true"></div>
+    <div class="step-content">
+      <p class="step-num">03.</p>
+      <h2 class="step-h2">Catalogação</h2>
+      <p class="step-p">O passo seguinte passou pela catalogação de todos os milhares de objetos recolhidos, para que se pudessem iniciar, posteriormente, os trabalhos de conservação.</p>
+    </div>
+  </article>
+
+  <article class="step" style="z-index:13;">
+    <div class="step-bg-video" aria-hidden="true">
+      <video src="https://memorial.fcporto.pt/_astro/catalogacao.DIdR9pPM.mp4#t=0.1"
+             poster="https://memorial.fcporto.pt/_astro/catalogacao.BvR1IfOQ.jpg"
+             muted preload="none" playsinline loop></video>
+    </div>
+    <div class="step-bg-overlay" aria-hidden="true"></div>
+    <div class="step-content">
+      <p class="step-num">04.</p>
+      <h2 class="step-h2">Arquivo</h2>
+      <p class="step-p">Os objetos recolhidos foram arquivados nas Reservas do Museu FC Porto, de onde uma parte saiu para integrar o Memorial Permanente. Os restantes continuam preservados no mesmo local onde foram depositados.</p>
+    </div>
+  </article>
+
+  <article class="step" style="z-index:14;">
+    <div class="step-bg-video" aria-hidden="true">
+      <video src="https://memorial.fcporto.pt/_astro/construcao.CAGZwodb.mp4#t=0.1"
+             poster="https://memorial.fcporto.pt/_astro/construcao.4S2RSM5k.jpg"
+             muted preload="none" playsinline loop></video>
+    </div>
+    <div class="step-bg-overlay" aria-hidden="true"></div>
+    <div class="step-content">
+      <p class="step-num">05.</p>
+      <h2 class="step-h2">Construção</h2>
+      <p class="step-p">Em setembro de 2025 arrancou a construção do Memorial Permanente, no Estádio do Dragão, na zona de acesso aos balneários de frente para a Galeria com algumas das imagens mais icónicas da história do clube, grande parte registadas nestes 42 anos de Presidência.</p>
+    </div>
+  </article>
+
+  <!-- AVB Quote -->
+  <article id="avb-quote" style="z-index:15;">
+    <div class="avb-bg" aria-hidden="true">
+      <img src="https://memorial.fcporto.pt/_astro/gradient.DgFJWIiY_Z1AiqEw.webp" alt="" loading="lazy" style="object-position:bottom;opacity:.48;">
+    </div>
+    <img class="avb-stars" src="https://memorial.fcporto.pt/_astro/stars.BxpLE7OM.svg" alt="" aria-hidden="true">
+    <blockquote id="avb-text">
+      "Entregou-se de corpo e alma ao Clube e pelo caminho formou homens e mulheres, jogadores e atletas orientados para a vitória e assentes na defesa dos mais elevados princípios com que defendeu o nosso símbolo e ajudou a formatar os valores do Futebol Clube do Porto."
+    </blockquote>
+    <p class="avb-attr" id="avb-attr">André Villas-Boas · presidente do FC Porto</p>
+  </article>
+
+  <div id="preservation-spacer"></div>
+</section>
+
+<!-- ── MUSEUM ── -->
+<section id="museum">
+  <div id="museum-bg" aria-hidden="true">
+    <img src="https://memorial.fcporto.pt/_astro/biography-election.C-SCeD1W_Z2p6Opq.webp" alt="" loading="lazy" style="filter:saturate(.5) brightness(.4);">
+  </div>
+
+  <div id="museum-content-wrap">
+    <div id="museum-intro-scroll">
+      <div id="museum-intro">
+        <h2 id="museum-counter">+15&nbsp;000<small>visitantes</small></h2>
+        <p id="museum-desc">
+          A 28 de dezembro de 2025, o Memorial abriu ao público, um momento marcante de memória e reconhecimento. A história e o percurso de Jorge Nuno Pinto da Costa ficaram, assim, materialmente imortalizados.
+        </p>
+      </div>
+    </div>
+
+    <div class="museum-test-scroll">
+      <div class="museum-test-sticky">
+        <blockquote id="mtest-a">
+          "A emoção que ele dava, estar dentro do campo, lá em cima. A coragem de dar tudo pelo clube. É mais por isso que eu sinto o clube tanto, tanto."
+        </blockquote>
+      </div>
+    </div>
+
+    <div class="museum-test-scroll">
+      <div class="museum-test-sticky">
+        <blockquote id="mtest-b">
+          "Eu nasci e fui logo sócia do Porto por isso sempre me foi incutida esta paixão e está espetacular o memorial. Nunca vi nada assim, gostei mesmo muito."
+        </blockquote>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer id="footer">
+  <div id="footer-bg" aria-hidden="true">
+    <img class="f-stars" src="https://memorial.fcporto.pt/_astro/stars.BxpLE7OM.svg" alt="">
+    <div class="f-glow"></div>
+  </div>
+  <div id="footer-inner">
+    <div id="footer-text">
+      <h2 id="footer-h2">Uma chama que fica.
+Para sempre Portista.</h2>
+      <p id="footer-p">O legado de Jorge Nuno Pinto da Costa preservado no Museu FC Porto.</p>
+      <a id="footer-cta" href="https://store.fcporto.pt/pt/tour" target="_blank" rel="noopener">Visite o Museu</a>
+    </div>
+    <div id="footer-portrait">
+      <img src="https://memorial.fcporto.pt/_astro/pinto-da-costa-portrait.DZ3Gvo94_Zj60nD.webp"
+           srcset="https://memorial.fcporto.pt/_astro/pinto-da-costa-portrait.DZ3Gvo94_ZJ3JCn.webp 378w,
+                   https://memorial.fcporto.pt/_astro/pinto-da-costa-portrait.DZ3Gvo94_Z25NqDE.webp 512w,
+                   https://memorial.fcporto.pt/_astro/pinto-da-costa-portrait.DZ3Gvo94_Zj60nD.webp 768w"
+           sizes="(max-width:1023px) 80vw, 50vw"
+           alt="Jorge Nuno Pinto da Costa" loading="lazy">
+    </div>
+  </div>
+</footer>
+
+<!-- ── SCRIPTS ── -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+<script>
+// ── Init ──
+gsap.registerPlugin(ScrollTrigger);
+
+const lenis = new Lenis({ lerp: 0.08, smoothWheel: true });
+lenis.on('scroll', ScrollTrigger.update);
+gsap.ticker.add(t => lenis.raf(t * 1000));
+gsap.ticker.lagSmoothing(0);
+
+const isLg = () => window.innerWidth >= 1024;
+const isMd = () => window.innerWidth >= 768;
+
+// ── Word split helper ──
+function splitWords(el) {
+  if (!el || el.dataset.split) return [];
+  el.dataset.split = '1';
+  const html = el.innerHTML;
+  // split preserving <br> and spaces
+  const parts = html.split(/(<br\s*\/?>|\s+)/gi);
+  el.innerHTML = '';
+  const spans = [];
+  parts.forEach(p => {
+    if (!p) return;
+    if (/^<br/i.test(p)) { el.appendChild(document.createElement('br')); return; }
+    if (/^\s+$/.test(p)) { el.appendChild(document.createTextNode(p)); return; }
+    const s = document.createElement('span');
+    s.className = 'word';
+    s.innerHTML = p;
+    el.appendChild(s);
+    spans.push(s);
+  });
+  return spans;
+}
+
+// ── Motion text (scroll-triggered word reveal) ──
+function motionText(el, opts = {}) {
+  if (!el) return null;
+  const words = splitWords(el);
+  if (!words.length) return null;
+  return gsap.from(words, {
+    opacity: 0.15,
+    duration: 0.4,
+    stagger: 0.06,
+    ease: 'power1.out',
+    ...opts
+  });
+}
+
+// ── Motion number ──
+function motionNumber(el) {
+  if (!el) return;
+  const raw = el.textContent.replace(/\D/g,'');
+  const target = parseInt(raw);
+  if (!target) return;
+  const obj = { v: 0 };
+  gsap.to(obj, {
+    v: target, duration: 2.5, ease: 'power2.out',
+    onUpdate() { el.textContent = Math.round(obj.v).toLocaleString('pt-PT'); },
+    scrollTrigger: { trigger: el, start: 'top 80%', toggleActions: 'play none none reverse' }
+  });
+}
+
+// ─────────────────────────────────────────
+// HERO
+// ─────────────────────────────────────────
+const heroVideo = document.querySelector('#hero-bg video');
+const heroCtaBtn = document.getElementById('hero-cta');
+
+// autoplay hero video
+heroVideo.play().catch(() => {});
+
+heroCtaBtn.addEventListener('click', () => {
+  lenis.scrollTo('#bio-intro', { duration: 2, easing: t => 1 - Math.pow(1 - t, 3) });
+});
+
+gsap.to('#hero-content', {
+  opacity: 0, scale: 3.33, filter: 'blur(12px)',
+  ease: 'power3.inOut',
+  scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true }
+});
+gsap.to('#hero-bg', {
+  opacity: 0, scale: 1.5,
+  ease: 'power3.inOut',
+  scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true }
+});
+
+// Memorial logo fades up
+gsap.to('#memorial-logo', {
+  opacity: 0, y: '-100%',
+  ease: 'power2.inOut',
+  scrollTrigger: { trigger: '#header', start: 'bottom top', end: 'bottom top-=50%', scrub: true }
+});
+
+// ─────────────────────────────────────────
+// BIO INTRO – scrubbed word reveal
+// ─────────────────────────────────────────
+const introQuote = document.getElementById('intro-quote');
+const introWords = splitWords(introQuote);
+if (introWords.length) {
+  gsap.from(introWords, {
+    opacity: 0.2, duration: 0.3, stagger: 0.11, ease: 'power1.out',
+    scrollTrigger: {
+      trigger: introQuote.parentElement,
+      start: 'center bottom', end: 'center center',
+      scrub: true
+    }
+  });
+}
+
+// ─────────────────────────────────────────
+// ELECTION – bg fade on intersection
+// ─────────────────────────────────────────
+const electionBg = document.getElementById('bio-election-bg');
+const electionText = document.getElementById('election-text');
+
+new IntersectionObserver(([{ isIntersecting: v }]) => {
+  gsap.to(electionBg, { opacity: v ? 1 : 0, ease: v ? 'power2.in' : 'power2.out', duration: 0.8 });
+}, { threshold: 0.5 }).observe(document.getElementById('bio-election'));
+
+motionText(electionText, {
+  scrollTrigger: { trigger: electionText, start: 'top 85%', end: 'bottom 60%', toggleActions: 'play none none reverse' }
+});
+
+// ─────────────────────────────────────────
+// ACHIEVEMENTS – sticky header slides up + parallax images
+// ─────────────────────────────────────────
+motionText(document.getElementById('ach-text'), {
+  scrollTrigger: { trigger: '#ach-text', start: 'top 85%', end: 'bottom 60%', toggleActions: 'play none none reverse' }
+});
+
+motionNumber(document.getElementById('ach-num'));
+
+if (isLg()) {
+  gsap.to('#bio-ach-header', {
+    y: '-25vh', ease: 'power1.in',
+    scrollTrigger: { trigger: '#bio-achievements', start: 'top bottom', end: 'bottom top', scrub: true }
+  });
+}
+
+document.querySelectorAll('.ach-asset[data-speed]').forEach(el => {
+  const s = parseFloat(el.dataset.speed) - 1;
+  if (Math.abs(s) < 0.01) return;
+  const fig = el.querySelector('figure');
+  const img = el.querySelector('img');
+  const tl = gsap.timeline({
+    scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true }
+  });
+  if (fig) tl.fromTo(fig, { yPercent: s * 100 }, { yPercent: -s * 100 }, 0);
+  if (img) tl.fromTo(img, { yPercent: -8 }, { yPercent: 8 }, 0);
+});
+
+// ─────────────────────────────────────────
+// HISTORY
+// ─────────────────────────────────────────
+const histBg  = document.getElementById('bio-history-bg');
+const histVideo = histBg.querySelector('video');
+
+new IntersectionObserver(([{ isIntersecting: v }]) => {
+  gsap.to(histBg, { opacity: v ? 1 : 0, ease: v ? 'power2.in' : 'power2.out', duration: 0.8 });
+  v ? histVideo.play().catch(() => {}) : histVideo.pause();
+}, { threshold: 0.5 }).observe(document.getElementById('bio-history'));
+
+if (isLg()) {
+  gsap.from(histBg, {
+    scale: 0.4, yPercent: 100, ease: 'power2.inOut',
+    scrollTrigger: {
+      trigger: '#bio-achievements', start: 'bottom bottom+=33%', end: 'bottom center', scrub: true
+    }
+  });
+}
+
+motionNumber(document.getElementById('hist-num'));
+motionText(document.getElementById('hist-text'), {
+  scrollTrigger: { trigger: '#hist-text', start: 'top 85%', end: 'bottom 60%', toggleActions: 'play none none reverse' }
+});
+
+// ─────────────────────────────────────────
+// REACH – title scale in/out + motion text
+// ─────────────────────────────────────────
+const reachTitle = document.getElementById('reach-title');
+const reachFirst = reachTitle.firstElementChild;
+const reachLast  = reachTitle.lastElementChild;
+
+motionText(document.getElementById('reach-text'), {
+  scrollTrigger: { trigger: '#reach-text', start: 'top 85%', end: 'bottom 60%', toggleActions: 'play none none reverse' }
+});
+
+new IntersectionObserver(([{ isIntersecting: v }]) => {
+  gsap.to('#bio-reach-wrap', { opacity: v ? 1 : 0, ease: v ? 'power2.in' : 'power2.out', duration: 0.6 });
+}, { threshold: 0.25 }).observe(document.getElementById('bio-reach-wrap'));
+
+(() => {
+  const tl = gsap.timeline({
+    defaults: { ease: 'power1.inOut' },
+    scrollTrigger: {
+      trigger: '#bio-reach-wrap', scrub: true,
+      start: 'top top-=50%', end: 'bottom bottom+=25%'
+    }
+  });
+  gsap.set(reachFirst, { transformOrigin: 'bottom' });
+  gsap.set(reachLast,  { transformOrigin: 'top' });
+  tl.to(reachFirst,  { scale: 0.56, opacity: 0.6 }, 0);
+  tl.from(reachLast, { scale: 0.56, opacity: 0.6 }, 0);
+})();
+
+// ─────────────────────────────────────────
+// PASSING
+// ─────────────────────────────────────────
+const passingTitle = document.getElementById('bio-passing-title');
+const passingWords = splitWords(passingTitle);
+const passingCeremony = document.querySelector('#bio-passing-ceremony video');
+const passingParticles = document.querySelector('#bio-passing-particles video');
+
+passingParticles.play().catch(() => {});
+
+if (passingWords.length) {
+  gsap.from(passingWords, {
+    opacity: 0, duration: 0.5, stagger: 0.08, ease: 'power1.out',
+    paused: true,
+    id: 'passingTL',
+    scrollTrigger: {
+      trigger: '#bio-passing-wrap',
+      start: 'top top-=75%', end: 'top top-=175%',
+      scrub: true
+    }
+  });
+}
+
+if (isLg()) {
+  gsap.to('#bio-passing-title', {
+    y: '-33vh', ease: 'power1.in',
+    scrollTrigger: { trigger: '#bio-passing-wrap', start: 'top center', end: 'bottom top', scrub: true }
+  });
+}
+
+gsap.from('#bio-passing-ceremony', {
+  opacity: 0, ease: 'power2.inOut',
+  scrollTrigger: { trigger: '#bio-passing-wrap', start: 'top top', end: 'top top-=100%', scrub: true }
+});
+
+ScrollTrigger.create({
+  trigger: '#bio-passing-wrap', start: 'top top', end: 'bottom center', scrub: true,
+  onEnter: () => passingCeremony.play().catch(() => {}),
+  onEnterBack: () => passingCeremony.play().catch(() => {}),
+  onLeave: () => passingCeremony.pause(),
+  onLeaveBack: () => passingCeremony.pause()
+});
+
+// ─────────────────────────────────────────
+// FAN INTRO motion text
+// ─────────────────────────────────────────
+motionText(document.getElementById('fan-intro-title'), {
+  scrollTrigger: { trigger: '#fan-intro', start: 'top 80%', toggleActions: 'play none none reverse' }
+});
+motionText(document.getElementById('fan-intro-sub'), {
+  scrollTrigger: { trigger: '#fan-intro', start: 'top 75%', toggleActions: 'play none none reverse' }
+});
+
+// Testimonial quotes – reveal on scroll
+['test-a-quote','test-b-quote','test-c-quote'].forEach(id => {
+  motionText(document.getElementById(id), {
+    scrollTrigger: { trigger: '#'+id, start: 'top 85%', end: 'bottom 50%', toggleActions: 'play none none reverse' }
+  });
+});
+
+// Testimonial videos – play when visible
+document.querySelectorAll('.test-media video').forEach(v => {
+  new IntersectionObserver(([{ isIntersecting: vis }]) => {
+    vis ? v.play().catch(() => {}) : v.pause();
+  }, { threshold: 0.3 }).observe(v);
+});
+
+// ─────────────────────────────────────────
+// PRESERVATION STEPS – stacking slide-in
+// ─────────────────────────────────────────
+const steps = document.querySelectorAll('.step');
+steps.forEach((step, i) => {
+  const media   = step.querySelector('.step-bg-video');
+  const content = step.querySelector('.step-content');
+  const video   = step.querySelector('video');
+  const ease    = i === 0 ? 'sine.out' : 'sine.inOut';
+
+  // Play video on scroll into view
+  if (video) {
+    new IntersectionObserver(([{ isIntersecting: vis }]) => {
+      vis ? video.play().catch(() => {}) : video.pause();
+    }, { threshold: 0.2 }).observe(step);
+  }
+
+  const tl = gsap.timeline({
+    scrollTrigger: { trigger: step, start: 'top bottom', end: 'bottom bottom', scrub: true }
+  });
+  tl.fromTo(step,  { yPercent: 100 }, { yPercent: 0, duration: 1, ease }, 0);
+  if (media) tl.fromTo(media, { yPercent: -100 }, { yPercent: 0, duration: 1, ease }, 0);
+  if (content) tl.from(content, { opacity: 0, yPercent: -75, duration: 0.6, delay: 0.4, ease: 'power2.out' }, 0);
+
+  if (i > 0) {
+    const prevContent = steps[i - 1].querySelector('.step-content');
+    if (prevContent) tl.to(prevContent, { opacity: 0.5, duration: 0.5, delay: 0.5, ease: 'power2.out' }, 0);
+  }
+});
+
+// ─────────────────────────────────────────
+// AVB QUOTE
+// ─────────────────────────────────────────
+const avbTl = gsap.timeline({
+  scrollTrigger: { trigger: '#avb-quote', start: 'top bottom', end: 'bottom bottom', scrub: true }
+});
+avbTl.fromTo('#avb-quote', { yPercent: 100 }, { yPercent: 0, duration: 1, ease: 'sine.inOut' }, 0);
+avbTl.fromTo('#avb-quote .avb-bg', { yPercent: -80 }, { yPercent: 0, duration: 1, ease: 'sine.inOut' }, 0);
+
+const avbTextWords = splitWords(document.getElementById('avb-text'));
+const avbAttrWords = splitWords(document.getElementById('avb-attr'));
+
+if (avbTextWords.length) {
+  gsap.from(avbTextWords, {
+    opacity: 0, duration: 1.25, stagger: 0.1, ease: 'power2.out',
+    scrollTrigger: { trigger: '#avb-quote', start: 'top 60%', toggleActions: 'play none none reverse' }
+  });
+}
+if (avbAttrWords.length) {
+  gsap.from(avbAttrWords, {
+    opacity: 0, y: 20, duration: 0.9, stagger: 0.08, ease: 'power2.out', delay: 1.5,
+    scrollTrigger: { trigger: '#avb-quote', start: 'top 60%', toggleActions: 'play none none reverse' }
+  });
+}
+
+// ─────────────────────────────────────────
+// MUSEUM – bg scale from center, counter
+// ─────────────────────────────────────────
+gsap.from('#museum-bg', {
+  scale: 0, y: '75%', ease: 'sine.out',
+  scrollTrigger: { trigger: '#museum', start: 'top bottom', end: 'top top-=50%', scrub: true }
+});
+
+// Counter
+ScrollTrigger.create({
+  trigger: '#museum-intro', start: 'top 80%', once: true,
+  onEnter() {
+    const el = document.getElementById('museum-counter');
+    const obj = { v: 0 };
+    gsap.to(obj, {
+      v: 15000, duration: 2.5, ease: 'power2.out',
+      onUpdate() {
+        el.innerHTML = '+' + Math.round(obj.v).toLocaleString('pt-PT') + ' 000<small>visitantes</small>';
+      }
+    });
+  }
+});
+
+const museumCounterEl = document.getElementById('museum-counter');
+const museumDescEl    = document.getElementById('museum-desc');
+const museumDescWords = splitWords(museumDescEl);
+
+gsap.from([museumCounterEl], {
+  opacity: 0, y: '66%', filter: 'blur(24px)', duration: 1.2, ease: 'power4.out',
+  scrollTrigger: { trigger: '#museum-intro', start: 'top 80%', toggleActions: 'play none none reverse' }
+});
+if (museumDescWords.length) {
+  gsap.from(museumDescWords, {
+    opacity: 0, duration: 1.125, stagger: 0.1, ease: 'power2.out',
+    scrollTrigger: { trigger: '#museum-intro', start: 'top 75%', toggleActions: 'play none none reverse' }
+  });
+}
+
+['mtest-a','mtest-b'].forEach(id => {
+  motionText(document.getElementById(id), {
+    scrollTrigger: { trigger: '#'+id, start: 'top 85%', end: 'bottom 50%', toggleActions: 'play none none reverse' }
+  });
+});
+
+// ─────────────────────────────────────────
+// FOOTER – blur fade in + text reveals
+// ─────────────────────────────────────────
+gsap.from('#footer', {
+  opacity: 0, filter: 'blur(48px)',
+  scrollTrigger: { trigger: '#footer', start: 'top top+=33%', end: 'top top', scrub: true, onLeaveBack() { footerTL.pause(); footerTL.progress(0); } }
+});
+
+const footerTL = gsap.timeline({ paused: true });
+const fh2Words = splitWords(document.getElementById('footer-h2'));
+const fpWords  = splitWords(document.getElementById('footer-p'));
+if (fh2Words.length) footerTL.from(fh2Words, { opacity: 0, y: 20, stagger: 0.1, duration: 1, ease: 'power2.out' });
+if (fpWords.length)  footerTL.from(fpWords,  { opacity: 0, y: 20, stagger: 0.1, duration: 1, ease: 'power2.out' }, '-=1s');
+footerTL.from('#footer-cta',     { opacity: 0, y: 20, scale: 1.33, filter: 'blur(12px)', duration: 1, ease: 'power2.out' }, '-=1s');
+footerTL.from(['#footer-bg', '#footer-portrait'], { opacity: 0, duration: 1, ease: 'power1.out' }, '-=1.75s');
+
+ScrollTrigger.create({
+  trigger: '#footer', start: 'top top+=64px', end: 'top top', scrub: true,
+  onEnter: () => footerTL.play()
+});
+
+// ─────────────────────────────────────────
+// Video: play on intersection (fallback)
+// ─────────────────────────────────────────
+document.querySelectorAll('video[src]').forEach(v => {
+  if (v.autoplay) return;
+  new IntersectionObserver(([{ isIntersecting: vis }]) => {
+    vis ? v.play().catch(() => {}) : v.pause();
+  }, { threshold: 0.25 }).observe(v);
+});
+
+// Fan tribute main video
+document.querySelector('#fan-video video').play().catch(() => {});
+
+// ─────────────────────────────────────────
+// Audio toggle
+// ─────────────────────────────────────────
+const audioBtn = document.getElementById('audio-btn');
+let audioOn = false;
+audioBtn.addEventListener('click', () => {
+  audioOn = !audioOn;
+  document.querySelectorAll('video').forEach(v => { v.muted = !audioOn; });
+  audioBtn.querySelector('span:last-child').textContent = audioOn ? 'Som ligado' : 'Som desligado';
+});
+
+// Logo → scroll to top
+document.getElementById('logo-btn').addEventListener('click', () => lenis.scrollTo(0, { immediate: true }));
+
+// Refresh ScrollTrigger on resize
+window.addEventListener('resize', () => ScrollTrigger.refresh());
+</script>
+
+</body>
+</html>
